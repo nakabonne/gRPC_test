@@ -1,10 +1,12 @@
 # 初期設定
 '''
-//①ビルド
+//①移動
+$ cd ../mel_exam
+//②ビルド
 $ docker-compose build
-//②起動
+//③起動
 $ docker-compose up -d
-//③DBセットアップ
+//④DBセットアップ
 $ docker-compose run mel-exam ruby db_setup.rb
 '''
 
