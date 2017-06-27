@@ -1,38 +1,3 @@
-#!/usr/bin/env ruby
-
-# Copyright 2015, Google Inc.
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-#
-#     * Redistributions of source code must retain the above copyright
-# notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
-# copyright notice, this list of conditions and the following disclaimer
-# in the documentation and/or other materials provided with the
-# distribution.
-#     * Neither the name of Google Inc. nor the names of its
-# contributors may be used to endorse or promote products derived from
-# this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-# Sample gRPC server that implements the Greeter::Helloworld service.
-#
-# Usage: $ path/to/greeter_server.rb
-
 this_dir = File.expand_path(File.dirname(__FILE__))
 lib_dir = File.join(this_dir, 'lib')
 $LOAD_PATH.unshift(lib_dir) unless $LOAD_PATH.include?(lib_dir)
@@ -44,43 +9,38 @@ require 'item'
 # GreeterServer is simple server that implements the Helloworld Greeter server.
 
 class GreeterServer < Helloworld::API::Service
-  # say_hello implements the SayHello rpc method.
-  #def say_hello(hello_req, _unused_call)
-  #  Helloworld::HelloReply.new(message: "Hello #{hello_req.name}")
-  #end
-
-  #def say_hello_again(hello_req, _unused_call)
-  #  Helloworld::HelloReply.new(message: "Hello again, #{hello_req.name}")
-  #end
-
-
-
-  def list_item(page, limit)
+  def list_item(list_req, _unused_call)
     items = []
-    limit.times do
-      items << Item.new
+    res = Item.new.all
+    puts res.inspect.class
+    # 結果を表示します。
+    res.each do |row|
+      puts "行は#{row}"
     end
-    return Helloworld::ListItemResponse.new(items: items)
+    list_req.limit.times do
+      items <<  Helloworld::Item.new(id: "1", name: "name1", title: "title1", description: "deddd", price: 20, pv: 200, status: true)
+    end
+    return Helloworld::ListItemResponse.new(items: items, total: 2, prevPage: 3, nextPage: 4)
   end
 
-  def get_item(id)
-    item = Item.find(id.to_i)
+  def get_item(get_req, _unused_call)
+    item = Item.find(get_req.id.to_i)
     item.pv+1
-    return item
+    return Helloworld::Item.new(id: item.id, name: item.id, title: item.title, description: item.description, price: item.price, pv: item.pv, status: item.status)
   end
 
-  def add_item(item)
-    return item.save ? Helloworld::ListItemResponse.new(item: item) : nil
+  def add_item(add_req, _unused_call)
+    return add_req.item.save ? Helloworld::ListItemResponse.new(item: add_req.item) : nil
   end
 
-  def update_item(item)
-    i = Item.find(item.id)
-    i = item
-    return i.save ? Helloworld::ListItemResponse.new(item: item) : nil
+  def update_item(update_req, _unused_call)
+    i = Item.find(update_req.item.id)
+    i = update_req.item
+    return i.save ? Helloworld::ListItemResponse.new(item: update_req.item) : nil
   end
 
-  def delete_item(id)
-    item = Item.find(id.to_i)
+  def delete_item(delete_req, _unused_call)
+    item = Item.find(delete_req.id.to_i)
     item.destroy
     return Helloworld::DeleteItemResponse
   end
@@ -94,5 +54,53 @@ def main
   s.handle(GreeterServer)
   s.run_till_terminated
 end
+
+=begin
+require 'mysql2'
+
+# MySQL に接続します。
+#my = Mysql2::Client.new('mel-exam-db', 'root', 'test456', 'mel_exam_development')
+#my = Mysql2::Client.new(:socket => '/var/lib/mysql/mysql.sock', :username => 'root', :password => 'test456', :encoding => 'utf8', :database => 'mel_exam_development')
+
+
+begin
+  db = Mysql2::Client.new(
+  :host => "mel-exam-db",
+  :username => "root",
+  :password => "test456",
+  :database => "mel_exam_development"
+  )
+rescue
+  host = Mysql2::Client.new(
+    :host => "mel-exam-db",
+    :username => "root",
+    :password => "test456"
+  )
+  host.query("CREATE DATABASE mel_exam_development;")
+end
+
+begin
+  #db.query('insert into items(id,name,title) values(1,’hei’,’title1’);')
+rescue => e
+  #puts "エラー#{e}"
+=begin
+  db.query('create table items(
+  id int,
+  name varchar(255),
+  title varchar(255),
+  description varchar(255),
+  price int,
+  pv int,
+  status int
+  );')
+end
+
+res = db.query('SELECT * FROM items')
+puts res.inspect.class
+# 結果を表示します。
+res.each do |row|
+  puts "行は#{row}"
+end
+=end
 
 main

@@ -10,6 +10,8 @@ end
 gem 'rails', '~> 5.0.3'
 # Use sqlite3 as the database for Active Record
 gem 'mysql2'
+gem 'grpc'
+gem 'grpc-tools'
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
 # Use SCSS for stylesheets

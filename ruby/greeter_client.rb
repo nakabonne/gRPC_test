@@ -41,19 +41,56 @@ require 'grpc'
 require 'helloworld_services_pb'
 require 'item'
 
-def main
-  stub = Helloworld::API::Stub.new('localhost:50051', :this_channel_is_insecure)
-  user = ARGV.size > 0 ?  ARGV[0] : 'world'
-  list_item = stub.list_item(Helloworld::ListItemRequest.new(page: 1, limit: 2)).items
+def stub
+  Helloworld::API::Stub.new('localhost:50051', :this_channel_is_insecure)
+end
+def list_item(page, limit)
+  list_item = stub.list_item(Helloworld::ListItemRequest.new(page: page.to_i, limit: limit.to_i)).items
   p "ListItem: #{list_item}"
-  get_item = stub.get_item(Helloworld::GetItemRequest.new(id: "1"))
+end
+def get_item(id)
+  get_item = stub.get_item(Helloworld::GetItemRequest.new(id: id.to_i))
   p "GetItem: #{get_item}"
+end
+def add_item
   add_item = stub.add_item(Item.new).item
   p "AddItem: #{add_item}"
+end
+def update_item
   update_item = stub.update_item(Helloworld::UpdateItemRequest.new(item: Item.new)).item
   p "UpdateItem: #{update_item}"
-  delete_item = stub.delete_item(Helloworld::DeleteItemRequest.new(id: "1"))
+end
+def delete_item(id)
+  delete_item = stub.delete_item(Helloworld::DeleteItemRequest.new(id: id.to_i))
   p "DeleteItem: #{delete_item}"
 end
 
-main
+def excution
+  puts "入力して下さい"
+  puts "1 => ListItem\n2 => GetItem\n3 => AddItem\n4 => UpdateItem\n5 => DeleteItem"
+  case gets.chomp
+  when "1"
+    puts "pageを入力して下さい"
+    page = gets.chomp
+    puts "limitを入力して下さい"
+    limit = gets.chomp
+    list_item(page, limit)
+  when "2"
+    puts "idを入力して下さい"
+    id = gets.chomp
+    get_item(id)
+  when "3"
+    add_item
+  when "4"
+    update_item
+  when "5"
+    puts "idを入力して下さい"
+    id = gets.chomp
+    delete_item(id)
+  else
+    puts "値が不正です。1~5のいずれかを入力して下さい"
+  end
+  excution
+end
+
+excution

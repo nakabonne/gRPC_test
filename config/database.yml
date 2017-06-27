@@ -1,0 +1,17 @@
+default: &default
+  adapter: mysql2
+  pool: 5
+  encoding: utf8
+  url: <%= ENV['DATABASE_URL'] %>
+
+development:
+  <<: *default
+  database: mel_exam_development
+
+test:
+  <<: *default
+  database: mel_exam_development_test
+
+production:
+  <<: *default
+  database: mel_exam_development
