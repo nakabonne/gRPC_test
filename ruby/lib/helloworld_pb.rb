@@ -4,15 +4,52 @@
 require 'google/protobuf'
 
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "helloworld.HelloRequest" do
-    optional :name, :string, 1
+  add_message "helloworld.GetItemRequest" do
+    optional :id, :string, 1
   end
-  add_message "helloworld.HelloReply" do
-    optional :message, :string, 1
+  add_message "helloworld.ListItemRequest" do
+    optional :page, :int32, 1
+    optional :limit, :int32, 2
+  end
+  add_message "helloworld.ListItemResponse" do
+    repeated :items, :message, 1, "helloworld.Item"
+    optional :total, :int32, 2
+    optional :prevPage, :int32, 3
+    optional :nextPage, :int32, 4
+  end
+  add_message "helloworld.AddItemResponse" do
+    optional :item, :message, 1, "helloworld.Item"
+  end
+  add_message "helloworld.UpdateItemRequest" do
+    optional :item, :message, 1, "helloworld.Item"
+  end
+  add_message "helloworld.UpdateItemResponse" do
+    optional :item, :message, 1, "helloworld.Item"
+  end
+  add_message "helloworld.DeleteItemRequest" do
+    optional :id, :string, 1
+  end
+  add_message "helloworld.DeleteItemResponse" do
+  end
+  add_message "helloworld.Item" do
+    optional :id, :string, 1
+    optional :name, :string, 2
+    optional :title, :string, 3
+    optional :description, :string, 4
+    optional :price, :int32, 5
+    optional :pv, :int32, 6
+    optional :status, :bool, 7
   end
 end
 
 module Helloworld
-  HelloRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.HelloRequest").msgclass
-  HelloReply = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.HelloReply").msgclass
+  GetItemRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.GetItemRequest").msgclass
+  ListItemRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.ListItemRequest").msgclass
+  ListItemResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.ListItemResponse").msgclass
+  AddItemResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.AddItemResponse").msgclass
+  UpdateItemRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.UpdateItemRequest").msgclass
+  UpdateItemResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.UpdateItemResponse").msgclass
+  DeleteItemRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.DeleteItemRequest").msgclass
+  DeleteItemResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.DeleteItemResponse").msgclass
+  Item = Google::Protobuf::DescriptorPool.generated_pool.lookup("helloworld.Item").msgclass
 end

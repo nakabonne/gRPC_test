@@ -39,14 +39,21 @@ $LOAD_PATH.unshift(lib_dir) unless $LOAD_PATH.include?(lib_dir)
 
 require 'grpc'
 require 'helloworld_services_pb'
+require 'item'
 
 def main
-  stub = Helloworld::Greeter::Stub.new('localhost:50051', :this_channel_is_insecure)
+  stub = Helloworld::API::Stub.new('localhost:50051', :this_channel_is_insecure)
   user = ARGV.size > 0 ?  ARGV[0] : 'world'
-  message = stub.say_hello(Helloworld::HelloRequest.new(name: user)).message
-  p "Greeting: #{message}"
-  message = stub.say_hello_again(Helloworld::HelloRequest.new(name: user)).message
-  p "Greeting: #{message}"
+  list_item = stub.list_item(Helloworld::ListItemRequest.new(page: 1, limit: 2)).items
+  p "ListItem: #{list_item}"
+  get_item = stub.get_item(Helloworld::GetItemRequest.new(id: "1"))
+  p "GetItem: #{get_item}"
+  add_item = stub.add_item(Item.new).item
+  p "AddItem: #{add_item}"
+  update_item = stub.update_item(Helloworld::UpdateItemRequest.new(item: Item.new)).item
+  p "UpdateItem: #{update_item}"
+  delete_item = stub.delete_item(Helloworld::DeleteItemRequest.new(id: "1"))
+  p "DeleteItem: #{delete_item}"
 end
 
 main

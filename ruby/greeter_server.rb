@@ -39,16 +39,50 @@ $LOAD_PATH.unshift(lib_dir) unless $LOAD_PATH.include?(lib_dir)
 
 require 'grpc'
 require 'helloworld_services_pb'
+require 'item'
 
 # GreeterServer is simple server that implements the Helloworld Greeter server.
-class GreeterServer < Helloworld::Greeter::Service
+
+class GreeterServer < Helloworld::API::Service
   # say_hello implements the SayHello rpc method.
-  def say_hello(hello_req, _unused_call)
-    Helloworld::HelloReply.new(message: "Hello #{hello_req.name}")
+  #def say_hello(hello_req, _unused_call)
+  #  Helloworld::HelloReply.new(message: "Hello #{hello_req.name}")
+  #end
+
+  #def say_hello_again(hello_req, _unused_call)
+  #  Helloworld::HelloReply.new(message: "Hello again, #{hello_req.name}")
+  #end
+
+
+
+  def list_item(page, limit)
+    items = []
+    limit.times do
+      items << Item.new
+    end
+    return Helloworld::ListItemResponse.new(items: items)
   end
 
-  def say_hello_again(hello_req, _unused_call)
-    Helloworld::HelloReply.new(message: "Hello again, #{hello_req.name}")
+  def get_item(id)
+    item = Item.find(id.to_i)
+    item.pv+1
+    return item
+  end
+
+  def add_item(item)
+    return item.save ? Helloworld::ListItemResponse.new(item: item) : nil
+  end
+
+  def update_item(item)
+    i = Item.find(item.id)
+    i = item
+    return i.save ? Helloworld::ListItemResponse.new(item: item) : nil
+  end
+
+  def delete_item(id)
+    item = Item.find(id.to_i)
+    item.destroy
+    return Helloworld::DeleteItemResponse
   end
 end
 
