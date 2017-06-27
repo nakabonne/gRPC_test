@@ -1,0 +1,30 @@
+version: '2'
+services:
+  mel-exam:
+    container_name: mel-exam
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_HOME=/mel_exam
+    environment:
+      TZ: Asia/Tokyo
+      RAILS_ENV: development
+      DATABASE_URL: 'mysql2://root:test456@mel-exam-db:3306'
+    command: ruby ruby/greeter_server.rb
+    volumes:
+      - .:/mel_exam
+    ports:
+      - "3000:3000"
+    links:
+      - mel-exam-db
+    depends_on:
+      - mel-exam-db
+  melcali-exam-db:
+    container_name: mel-exam-db
+    image: mysql:5.6
+    environment:
+      TZ: Asia/Tokyo
+      MYSQL_ROOT_PASSWORD: test456
+    ports:
+     - "3307:3306"
