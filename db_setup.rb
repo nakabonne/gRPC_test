@@ -39,7 +39,7 @@ def insert(con)
   end
 end
 
-#create_database
+create_database
 con = connect
 create_table(con)
 insert(con)
