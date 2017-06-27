@@ -52,12 +52,12 @@ def get_item(id)
   get_item = stub.get_item(Helloworld::GetItemRequest.new(id: id.to_i))
   p "GetItem: #{get_item}"
 end
-def add_item
-  add_item = stub.add_item(Item.new).item
+def add_item(item)
+  add_item = stub.add_item(Helloworld::Item.new(id: item.id, name: item.id, title: item.title, description: item.description, price: item.price, pv: item.pv, status: item.status)).item
   p "AddItem: #{add_item}"
 end
-def update_item
-  update_item = stub.update_item(Helloworld::UpdateItemRequest.new(item: Item.new)).item
+def update_item(item)
+  update_item = stub.update_item(Helloworld::UpdateItemRequest.new(item: item)).item
   p "UpdateItem: #{update_item}"
 end
 def delete_item(id)
