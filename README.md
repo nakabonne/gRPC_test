@@ -1,4 +1,4 @@
-# 初期設定
+## 初期設定
 ```
 //①移動
 $ cd ../mel_exam
@@ -10,12 +10,12 @@ $ docker-compose up -d
 $ docker-compose run mel-exam ruby db_setup.rb
 ```
 
-# サーバー起動
+## サーバー起動
 ```
 $ docker-compose run mel-exam ruby ruby/greeter_server.rb
 ```
 
-#クライアント起動
+## クライアント起動
 ```
 $ docker-compose run mel-exam ruby ruby/greeter_client.rb
 ```
