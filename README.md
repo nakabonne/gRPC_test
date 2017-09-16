@@ -1,22 +1,21 @@
-前提：dockerをインストール済
-## 初期設定
+## SetUp
 ```
-//①移動
+//①move
 $ cd ../mel_exam
-//②ビルド
+//②build
 $ docker-compose build
-//③起動
+//③start
 $ docker-compose up -d
-//④DBセットアップ
+//④set up db
 $ docker-compose run mel-exam ruby db_setup.rb
 ```
 
-## サーバー起動
+## Start server
 ```
 $ docker-compose run mel-exam ruby ruby/greeter_server.rb
 ```
 
-## クライアント起動
+## Start client
 ```
 $ docker-compose run mel-exam ruby ruby/greeter_client.rb
 ```
